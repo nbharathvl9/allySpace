@@ -1,15 +1,29 @@
 const express = require('express');
-const app = express();
 require('dotenv').config();
-const connectdb = require("./db.js")
+
+const app = express();
+const connectdb = require("./db.js");
+const { mongo, default: mongoose } = require('mongoose');
+
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.listen( 3000, async () => {
-    await connectdb();
-    console.log('Server is running on port 3000');
-
+app.post('/user', (res,req) => {
+  
 });
+
+
+connectdb()
+.then(() => {
+    console.log("Connected to database!");
+    app.listen(3000, () => {
+      console.log("Server is running on port 3000");
+    });
+  })
+  .catch((err) => {
+    console.log("Connection failed!", err);
+  });
+
 
