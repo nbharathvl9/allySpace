@@ -1,18 +1,12 @@
 const express = require('express');
 require('dotenv').config();
 
-const app = express();
+const mongoose = require("mongoose");
 const connectdb = require("./db.js");
-const { mongo, default: mongoose } = require('mongoose');
+const userRouter = require("./router/userRouter.js")
 
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
-app.post('/user', (res,req) => {
-  
-});
+const app = express();
+app.use(express.json());
 
 
 connectdb()
@@ -26,4 +20,6 @@ connectdb()
     console.log("Connection failed!", err);
   });
 
+
+  app.use("/user", userRouter);
 
