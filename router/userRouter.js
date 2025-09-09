@@ -6,7 +6,7 @@ const router = express.Router();
 // CREATE a new user
 router.post("/", async (req, res) => {
   try {
-    const { id, name, userName, email, password } = req.body;
+    const { name, userName, email, password } = req.body;
 
     // validate
     if (!name || !email || !password) {
@@ -14,7 +14,7 @@ router.post("/", async (req, res) => {
     }
 
     // create user
-    const user = new User({ id, name, userName , email, password  });
+    const user = new User({name, userName , email, password  });
     await user.save();
 
     res.status(201).json({ message: "User created successfully", user });
