@@ -4,6 +4,7 @@ require('dotenv').config();
 const mongoose = require("mongoose");
 const connectdb = require("./db.js");
 const userRouter = require("./router/userRouter.js")
+const AuthRouter=require("./router/Auth.js");
 
 const app = express();
 app.use(express.json());
@@ -21,5 +22,6 @@ connectdb()
   });
 
 
-  app.use("/user", userRouter);
+  
+  app.use("/Auth",AuthRouter);
 
