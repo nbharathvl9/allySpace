@@ -1,0 +1,10 @@
+:root{
+  --indigo1:#2F356B;
+  --indigo2:#454A8C;
+  --indigo3:#5C63B1;
+  --indigo4:#7485FF;
+  --accent:#00C6FF;        /* new accent */
+  --mint:#0FD8B3;          /* subtle extra accent */
+  --chip:#1C2047;          /* surfaces */
+  --textSoft:rgba(255,255,255,.8);
+}
