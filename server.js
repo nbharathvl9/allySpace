@@ -7,7 +7,11 @@ const cors = require("cors");
 const app = express();
 app.use(express.json());
 
-app.use(cors());
+app.use(cors({
+  origin: "*", // you can replace * with your friend's frontend URL when hosted
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 
 // Connect to DB
 connectdb()
