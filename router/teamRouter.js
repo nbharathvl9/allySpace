@@ -1,10 +1,12 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const auth = require('../middleware/authMiddleware');
-const teamController = require('../Controllers/teamController');
+const auth = require("../middleware/authMiddleware");
+const teamController = require("../Controllers/teamController");
 
-router.post('/create', auth, teamController.createTeam);
-router.get('/my-teams', auth, teamController.getMyTeams);
-router.get('/:teamId', auth, teamController.getTeamHierarchy);
+// 🟩 Invite member to main team
+router.post("/:teamId/invite", auth, teamController.inviteMember);
+
+// 🟨 Invite member to a subteam
+router.post("/:teamId/subteams/:subteamId/invite", auth, teamController.inviteMember);
 
 module.exports = router;
