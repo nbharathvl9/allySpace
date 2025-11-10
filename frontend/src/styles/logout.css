@@ -1,0 +1,14 @@
+.logout-btn {
+  background: var(--indigo4);
+  color: white;
+  border: none;
+  padding: 0.55rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: var(--indigo3);
+  transform: translateY(-2px);
+}

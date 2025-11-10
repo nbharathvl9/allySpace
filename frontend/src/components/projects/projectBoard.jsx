@@ -1,13 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
-  FiUserPlus,
-  FiTrash2,
-  FiUserCheck,
-  FiUsers,
-  FiClipboard,
-  FiCalendar,
-  FiPlus,
+  FiPlus
 } from "react-icons/fi";
 import { useProjects } from "../../context/ProjectContext";
 import ProjectHeader from "./projectHeader.jsx";
@@ -15,15 +9,16 @@ import SubprojectCard from "./subProjectCard.jsx";
 import CreateSubprojectModal from "../modals/CreateSubprojectModal";
 import ManageMembersModal from "../modals/ManageMembersModal";
 import AssignTaskModal from "../modals/AssignTaskModal";
+import SubprojectHeadView from "./subProjectHeadView.jsx";
+import MemberView from "./member_View.jsx";
 
 export default function ProjectBoard() {
   const { projectId } = useParams();
   const { projects, currentUser } = useProjects();
 
-  // 🔹 Handle ID type mismatch (string vs number)
+  // Find the current project
   const project = projects.find((p) => String(p.id) === String(projectId));
 
-  // 🔹 If no project found
   if (!project)
     return (
       <div className="content">
@@ -31,59 +26,52 @@ export default function ProjectBoard() {
       </div>
     );
 
-  // 🔹 Role checks
+  // Local states for modals
   const [showCreateSub, setShowCreateSub] = useState(false);
   const [manageFor, setManageFor] = useState(null);
   const [assignFor, setAssignFor] = useState(null);
 
+  // Determine user's role
   const myRole = useMemo(() => {
-    if (!project) return "NONE";
     if (project.head === currentUser) return "HEAD";
-
-    const asLead = project.subprojects?.find(
-      (s) => s.leader === currentUser
-    );
-    if (asLead) return "SUB_HEAD";
-
-    const asMem = project.subprojects?.find((s) =>
-      s.members.includes(currentUser)
-    );
-    if (asMem) return "MEMBER";
-
+    if (project.subprojects?.find((s) => s.leader === currentUser)) return "SUB_HEAD";
+    if (project.subprojects?.find((s) => s.members.includes(currentUser))) return "MEMBER";
     return "NONE";
   }, [project, currentUser]);
 
-  // 🔹 Render layout
+  const userSubproject = project.subprojects?.find((s) => s.leader === currentUser);
+
   return (
     <div className="content max">
-      {/* Header Section */}
+
+      {/* Header */}
       <ProjectHeader
         project={project}
         myRole={myRole}
         onCreateSub={() => setShowCreateSub(true)}
       />
 
-      {/* Subproject Grid */}
-      <div className="grid-subprojects">
-        {project.subprojects?.length > 0 ? (
-          project.subprojects.map((sub) => (
-            <SubprojectCard
-              key={sub.id}
-              project={project}
-              sub={sub}
-              myRole={myRole}
-              onManageMembers={() => setManageFor({ sub })}
-              onAssign={() => setAssignFor({ sub })}
-            />
-          ))
-        ) : (
-          <div className="empty-state">
-            <p>No subprojects yet.</p>
-          </div>
-        )}
+      {/* --- Project Head View --- */}
+      {myRole === "HEAD" && (
+        <div className="grid-subprojects">
+          {project.subprojects?.length > 0 ? (
+            project.subprojects.map((sub) => (
+              <SubprojectCard
+                key={sub.id}
+                project={project}
+                sub={sub}
+                myRole={myRole}
+                onManageMembers={() => setManageFor({ sub })}
+                onAssign={() => setAssignFor({ sub })}
+              />
+            ))
+          ) : (
+            <div className="empty-state">
+              <p>No subprojects yet.</p>
+            </div>
+          )}
 
-        {/* Add Subproject Button */}
-        {myRole === "HEAD" && (
+          {/* Add Subproject Button */}
           <div
             className="sub-card add-card"
             onClick={() => setShowCreateSub(true)}
@@ -93,10 +81,46 @@ export default function ProjectBoard() {
               <p>Add Subproject</p>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Modals */}
+      {/* --- Subproject Head View --- */}
+      {myRole === "SUB_HEAD" && userSubproject && (
+        <div className="subproject-head-section">
+          <SubprojectHeadView
+            project={project}
+            subproject={userSubproject}
+            currentUser={currentUser}
+            onSendResponse={(subId, message) => {
+              console.log("Response sent to Project Head:", message);
+            }}
+          />
+        </div>
+      )}
+
+      {/* --- Member View (Placeholder for now) --- */}
+    
+      {myRole === "MEMBER" && (
+    <MemberView
+      project={project}
+      subproject={project.subprojects.find((s) =>
+        s.members.includes(currentUser)
+      )}
+      currentUser={currentUser}
+      onSendResponse={(subId, message) =>
+        console.log("Response sent to Subproject Head:", message)
+      }
+    />
+  )}
+
+      {/* --- No Role --- */}
+      {myRole === "NONE" && (
+        <div className="content">
+          <h2 className="title">You have no access to this project.</h2>
+        </div>
+      )}
+
+      {/* --- Modals --- */}
       {showCreateSub && (
         <CreateSubprojectModal
           project={project}

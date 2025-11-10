@@ -679,5 +679,182 @@ button.action-primary {
     grid-template-columns: 1fr;
   }
 }
+/* ================= PROFILE POPUP ================== */
+.profile-popup {
+  max-width: 480px;
+  background: rgba(69, 74, 140, 0.97);
+  text-align: center;
+  padding: 2rem;
+  color: white;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.profile-top {
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+.close-btn:hover {
+  color: white;
+  transform: scale(1.1);
+}
+
+.avatar-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+.profile-avatar-large {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 3px solid var(--indigo4);
+  box-shadow: 0 0 15px rgba(116, 133, 255, 0.4);
+}
+
+.profile-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-top: 0.8rem;
+}
+.profile-role {
+  opacity: 0.8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+}
+
+.profile-content {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1rem;
+  border-radius: 12px;
+  text-align: left;
+}
+.profile-content h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+  color: var(--indigo4);
+}
+.profile-projects {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.profile-projects li {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+}
+.profile-projects li strong {
+  font-size: 0.95rem;
+  color: var(--indigo4);
+}
+.profile-projects li p {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.profile-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.2rem;
+}
+
+.profile-edit {
+  background: var(--indigo4);
+  border: none;
+  color: white;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 0.6rem 1.4rem;
+}
+.profile-edit:hover {
+  background: var(--indigo3);
+}
+
+.profile-logout {
+  background: rgba(255, 80, 80, 0.25);
+}
+.profile-logout:hover {
+  background: rgba(255, 80, 80, 0.35);
+}
+/* --- Editable Input Fields --- */
+.edit-input {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 1rem;
+  text-align: center;
+  padding: 0.5rem;
+  margin-top: 0.6rem;
+  width: 70%;
+  transition: all 0.3s ease;
+}
+
+.edit-input.small {
+  width: 60%;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.edit-input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 0 2px var(--indigo4);
+}
+
+/* Save & Cancel Buttons */
+.btn.save {
+  background: var(--indigo4);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.4rem;
+  border-radius: 10px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn.save:hover {
+  background: var(--indigo3);
+}
+
+.btn.cancel {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.4rem;
+  border-radius: 10px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn.cancel:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+
 
 

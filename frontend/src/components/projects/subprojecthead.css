@@ -1,0 +1,247 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+
+.sp-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2.5rem;
+  color: white;
+  min-height: 100vh;
+  background: linear-gradient(145deg, var(--indigo1), #1d214a);
+}
+
+/* === GLASSMORPHISM === */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  padding: 1.8rem;
+}
+
+/* HEADER */
+.sp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.sp-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--indigo4);
+  margin-bottom: 0.3rem;
+}
+
+.sp-meta {
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+.sp-role-badge {
+  background: linear-gradient(90deg, var(--indigo3), var(--indigo4));
+  padding: 0.6rem 1.2rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+/* SECTIONS */
+.sp-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* BUTTONS */
+.btn-primary {
+  background: linear-gradient(90deg, var(--indigo3), var(--indigo4));
+  border: none;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 12px var(--indigo4);
+}
+
+.btn-primary.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* CHIPS */
+.chips-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.chip {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  padding: 0.5rem 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.chip-x {
+  background: none;
+  border: none;
+  color: #ff7070;
+  cursor: pointer;
+}
+
+/* TASKS */
+.tasks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.task-card {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  transition: 0.25s;
+}
+
+.task-card.done {
+  border-color: var(--indigo4);
+  background: rgba(116, 133, 255, 0.15);
+}
+
+.task-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-actions button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  margin-left: 0.4rem;
+  transition: 0.2s;
+}
+
+.task-actions button:hover {
+  color: var(--indigo4);
+  transform: scale(1.1);
+}
+
+.task-actions .danger:hover {
+  color: #ff6b6b;
+}
+
+.task-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.task-response {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 10px;
+  padding: 0.6rem;
+  color: white;
+  resize: none;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.form-row input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 10px;
+  padding: 0.6rem;
+  color: white;
+}
+
+/* SEND TO HEAD */
+.send-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.send-row textarea {
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  border-radius: 12px;
+  padding: 1rem;
+  color: white;
+  resize: none;
+}
+
+/* POPUP */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+.popup-card {
+  background: rgba(69, 74, 140, 0.9);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+.popup-card h3 {
+  color: var(--indigo4);
+  margin-bottom: 1rem;
+}
+
+.popup-card input {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+  }
+  .sp-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}

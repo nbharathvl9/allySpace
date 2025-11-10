@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FiX, FiPlus, FiChevronRight } from "react-icons/fi";
 import { useProjects } from "../../context/ProjectContext";
-import CreateProjectModal from "../modals/CreateSubprojectModal.jsx";
+import CreateProjectModal from "../modals/CreateProjectModal";
 import "./Sidebar.css";
 
 export default function Sidebar({ open, close }) {
