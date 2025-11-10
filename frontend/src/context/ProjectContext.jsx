@@ -5,34 +5,136 @@ const ProjectContext = createContext();
 export const useProjects = () => useContext(ProjectContext);
 
 // Roles: "HEAD" (project head), "SUB_HEAD" (subproject lead), "MEMBER"
-const seed = [
+const seed=[
   {
     id: "p1",
     name: "Campus Connect",
     description: "Main portal for events and clubs.",
-    head: "sam",                     // username of project head
+    head: "sam", // Sam is the Project Head
     subprojects: [
       {
         id: "sp1",
         name: "Mobile App",
-        description: "Android/iOS",
+        description: "Android/iOS version of the Campus Connect portal.",
         leader: "anita",
-        members: ["ravi","kim"],
+        members: ["ravi", "kim"],
         tasks: [
-          { id:"t1", title:"Auth screens", due:"2025-11-15", assignee:"ravi", status:"in-progress" }
-        ]
+          {
+            id: "t1",
+            title: "Auth Screens",
+            due: "2025-11-15",
+            assignee: "ravi",
+            status: "in-progress",
+          },
+          {
+            id: "t2",
+            title: "Push Notifications",
+            due: "2025-11-22",
+            assignee: "kim",
+            status: "not-started",
+          },
+        ],
       },
       {
         id: "sp2",
         name: "Web Dashboard",
-        description: "Admin + Analytics",
+        description: "Admin dashboard with analytics and moderation tools.",
         leader: "rohan",
         members: ["lee"],
-        tasks: []
+        tasks: [
+          {
+            id: "t3",
+            title: "User Stats Graphs",
+            due: "2025-11-18",
+            assignee: "lee",
+            status: "in-progress",
+          },
+        ],
+      },
+    ],
+  },
+
+  {
+    id: "p2",
+    name: "Smart Attendance System",
+    description: "IoT and AI-powered attendance management for universities.",
+    head: "anita", // Here Sam is not the project head
+    subprojects: [
+      {
+        id: "sp1",
+        name: "Face Recognition Module",
+        description: "Develop and integrate real-time facial detection.",
+        leader: "sam", // Sam is Subproject Head here 👇
+        members: ["ravi", "tanya"],
+        tasks: [
+          {
+            id: "t1",
+            title: "Model Training",
+            due: "2025-11-20",
+            assignee: "ravi",
+            status: "in-progress",
+          },
+          {
+            id: "t2",
+            title: "Integration with Camera Feed",
+           
+          }
+        ]
       }
     ]
-  }
-];
+  },
+  {
+  id: "p3",
+  name: "Smart Campus Tracker",
+  description: "IoT-driven system for tracking classroom and lab usage efficiently.",
+  head: "anita", // main project head
+  subprojects: [
+    {
+      id: "sp1",
+      name: "Hardware Sensors",
+      description: "Arduino + ESP32 setup for room occupancy detection.",
+      leader: "rohan",
+      members: ["sam", "ravi"], // 👈 sam is a MEMBER here
+      tasks: [
+        {
+          id: "t1",
+          title: "Configure motion sensors",
+          due: "2025-11-22",
+          assignee: "sam",
+          status: "assigned",
+          response: ""
+        },
+        {
+          id: "t2",
+          title: "Wire up ESP32 to main board",
+          due: "2025-11-25",
+          assignee: "ravi",
+          status: "assigned",
+          response: ""
+        }
+      ]
+    },
+    {
+      id: "sp2",
+      name: "Data Dashboard",
+      description: "Web UI to visualize occupancy and alerts.",
+      leader: "arjun",
+      members: ["lee", "kim"],
+      tasks: [
+        {
+          id: "t3",
+          title: "Build live charts",
+          due: "2025-11-20",
+          assignee: "lee",
+          status: "in-progress",
+          response: "Data fetching module halfway done."
+        }
+      ]
+    }
+  ]
+}
+
+]
 
 export function ProjectProvider({ children }){
   const [projects, setProjects] = useState(seed);
