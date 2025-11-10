@@ -1,8 +1,8 @@
 const express = require("express");
 require("dotenv").config();
 const connectdb = require("./db.js");
-const AuthRouter = require("./router/Auth.js");
 const cors = require("cors");
+const AuthRouter = require("./router/Auth.js");
 
 const app = express();
 app.use(express.json());
@@ -23,3 +23,14 @@ connectdb()
 
 // Routes
 app.use("/auth", AuthRouter);
+
+const subteamRouter = require("./router/subteamRouter");
+const teamRouter = require("./router/teamRouter");
+app.use("/api/team", teamRouter);
+app.use("/api/team", subteamRouter);
+
+const taskRouter = require("./router/taskRouter");
+app.use("/api/team", taskRouter);
+
+const notificationRouter = require("./router/notification.js");
+app.use("/api/notifications", notificationRouter);
