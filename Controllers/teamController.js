@@ -3,6 +3,33 @@ const Team = require("../models/Team");
 const Subteam = require("../models/Subteam");
 const User = require("../models/User");
 
+// ✅ Create a new Team
+exports.createTeam = async (req, res) => {
+  try {
+    const { TeamName, Prototype } = req.body;
+    const userId = req.user.id; // logged-in user (Team Head)
+
+    if (!TeamName) {
+      return res.status(400).json({ message: "Team name is required" });
+    }
+
+    // Create new team
+    const newTeam = await Team.create({
+      TeamName,
+      Prototype,
+      TeamHId: userId,
+      TeamMembers: [userId], // Team head is also first member
+    });
+
+    res.status(201).json({
+      message: "Team created successfully",
+      team: newTeam,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // ✅ Team Head or Subteam Head can invite members
 exports.inviteMember = async (req, res) => {
   try {
