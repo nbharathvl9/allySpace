@@ -19,6 +19,10 @@ import Signup from "./components/auth/Signup";
 import Sidebar from "./components/sidebar/sidebar.jsx";
 import ProjectBoard from "./components/projects/projectBoard.jsx";
 import { ProjectProvider } from "./context/ProjectContext.jsx";
+import handleLogoutFn from "./components/auth/logout.jsx"; // ✅ renamed to avoid confusion
+
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Styles
 import "./styles/global.css";
@@ -31,9 +35,11 @@ function MainApp() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [hasNotification] = useState(true);
   const [showProfile, setShowProfile] = useState(false);
-   console.log(import.meta.env.VITE_API_URL);
 
-  // 🔹 Temporary placeholders until context/backend connects
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // 🔹 Temporary placeholders until backend integration
   const [currentUser] = useState("Sam");
   const [isHead] = useState(true);
   const [teams] = useState([
@@ -42,10 +48,11 @@ function MainApp() {
     { name: "Open Source Squad", description: "Contributing to open-source." },
   ]);
 
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const handleLogout = () => navigate("/login");
+  // ✅ Clean, unified logout handler (calls backend + clears token + navigates)
+  const handleLogout = async () => {
+    await handleLogoutFn(navigate);
+    toast.info("You’ve been logged out!");
+  };
 
   const showSidebar = location.pathname.startsWith("/app");
 
@@ -56,7 +63,6 @@ function MainApp() {
 
       {/* --- Top Navbar --- */}
       <header className="topbar">
-        {/* Left section */}
         <div className="topbar-left">
           <button
             className="menu-btn"
@@ -134,7 +140,7 @@ function MainApp() {
         <FiMessageSquare />
       </button>
 
-      {/* 👇 Profile Popup (renders above everything else) */}
+      {/* Profile Popup */}
       {showProfile && (
         <ProfilePopup
           user={currentUser}
