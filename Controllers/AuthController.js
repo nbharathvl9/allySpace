@@ -8,7 +8,6 @@ const register = async (req, res) => {
     const { name, userName, email, password } = req.body;
     if (!name || !userName || !email || !password)
       return res.status(400).json({ message: "All fields required" });
-    }
 
     // 2️⃣ Check duplicates
     const existingUser = await User.findOne({ email });
