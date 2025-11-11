@@ -6,6 +6,8 @@ const subteamController = require("../controllers/subteamController");
 // ✅ Create Subteam under a Team
 router.post("/:teamId/subteams", auth, subteamController.createSubteam);
 
+router.put("/:teamId/subteams/:subteamId/assign-head", auth, subteamController.assignSubteamHead);
+
 // ✅ Get all Subteams under a Team
 router.get("/:teamId/subteams", auth, subteamController.getSubteams);
 

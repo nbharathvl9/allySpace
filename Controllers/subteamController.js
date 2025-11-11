@@ -5,9 +5,9 @@ const Subteam = require("../models/Subteam");
 // ✅ Create Subteam inside a Team
 exports.createSubteam = async (req, res) => {
   try {
-    const userId = req.user.id; // from auth middleware
+    const userId = req.user.id; // logged-in user (Team Head)
     const { teamId } = req.params;
-    const { name, headId, description } = req.body;
+    const { name, description } = req.body;
 
     // Check if team exists
     const team = await Team.findById(teamId);
@@ -15,23 +15,56 @@ exports.createSubteam = async (req, res) => {
 
     // Only Team Head can create subteams
     if (team.TeamHId.toString() !== userId) {
-      return res.status(403).json({ message: "Only Team Head can create subteams" });
+      return res
+        .status(403)
+        .json({ message: "Only Team Head can create subteams" });
     }
 
+    // ✅ Assign the creator as subteam head automatically
     const subteam = new Subteam({
       name,
       teamId,
-      headId: headId || null,
-      members: headId ? [headId] : [],
+      headId: userId,
+      members: [userId], // optional: auto-add subteam head as first member
       description,
     });
 
     await subteam.save();
-    res.status(201).json({ message: "Subteam created successfully", subteam });
+
+    res
+      .status(201)
+      .json({ message: "Subteam created successfully", subteam });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
+// ✅ Assign or change Subteam Head (only Team Head can do this)
+exports.assignSubteamHead = async (req, res) => {
+  try {
+    const { teamId, subteamId } = req.params;
+    const { newHeadId } = req.body;
+    const userId = req.user.id;
+
+    const team = await Team.findById(teamId);
+    if (!team) return res.status(404).json({ message: "Team not found" });
+
+    if (team.TeamHId.toString() !== userId)
+      return res.status(403).json({ message: "Only Team Head can assign Subteam Head" });
+
+    const subteam = await Subteam.findById(subteamId);
+    if (!subteam) return res.status(404).json({ message: "Subteam not found" });
+
+    subteam.headId = newHeadId;
+    if (!subteam.members.includes(newHeadId)) subteam.members.push(newHeadId);
+
+    await subteam.save();
+    res.json({ message: "Subteam Head assigned successfully", subteam });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 
 // ✅ Add a member to a Subteam
 exports.addMemberToSubteam = async (req, res) => {

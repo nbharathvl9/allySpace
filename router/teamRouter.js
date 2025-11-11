@@ -3,6 +3,9 @@ const router = express.Router();
 const auth = require("../middleware/authMiddleware");
 const teamController = require("../Controllers/teamController");
 
+// ✅ Create team
+router.post("/create", auth, teamController.createTeam);
+
 // 🟩 Invite member to main team
 router.post("/:teamId/invite", auth, teamController.inviteMember);
 
