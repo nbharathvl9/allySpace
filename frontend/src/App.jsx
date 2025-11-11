@@ -31,6 +31,7 @@ function MainApp() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [hasNotification] = useState(true);
   const [showProfile, setShowProfile] = useState(false);
+   console.log(import.meta.env.VITE_API_URL);
 
   // 🔹 Temporary placeholders until context/backend connects
   const [currentUser] = useState("Sam");

@@ -4,7 +4,6 @@ const Counter = require("./Counter");
 const userSchema = new mongoose.Schema(
   {
     id: { type: Number, unique: true }, // auto-increment ID
-    name: { type: String, required: true },
     userName: { type: String, unique: true, required: true },
     email: { type: String, unique: true, required: true },
     password: { type: String, required: true }
