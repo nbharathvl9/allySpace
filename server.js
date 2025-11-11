@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 
 app.use(cors({
-  origin: "*", // you can replace * with your friend's frontend URL when hosted
+  origin: "http://localhost:5173", // you can replace * with your friend's frontend URL when hosted
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));

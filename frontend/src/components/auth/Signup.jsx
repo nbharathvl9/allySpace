@@ -2,16 +2,40 @@ import React from "react";
 import "./Auth.css";
 import { FiUser, FiMail, FiLock } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
+import api from "../../api/axiosConfig.js"; 
+import axios from "axios";
+import { toast } from "react-toastify";
 
 export default function Signup({ onSignup }) {
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // TODO: call backend; on success:
-    onSignup();         // set isAuthenticated = true
-    navigate("/app");
-  };
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const userName = e.target[0].value.trim();
+  const email = e.target[1].value.trim();
+  const password = e.target[2].value.trim();
+
+  try {
+    const res = await axios.post(`${import.meta.env.VITE_API_URL}/auth/register`, {
+      userName,
+      email,
+      password,
+    });
+
+    if (res.data?.token) {
+      localStorage.setItem("token", res.data.token);
+      toast.success("Signup successful!");
+      onSignup();
+      navigate("/app");
+    } else {
+      toast.error("Unexpected response from server.");
+    }
+  } catch (err) {
+    console.error("Signup error:", err.response?.data || err.message);
+    toast.error(err.response?.data?.message || "Signup failed. Try again!");
+  }
+};
 
   return (
     <div className="auth-container">
