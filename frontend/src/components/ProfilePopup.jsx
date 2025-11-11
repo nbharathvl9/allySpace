@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FiX,
   FiUser,
@@ -9,17 +10,18 @@ import {
   FiLayers,
 } from "react-icons/fi";
 import "../App.css";
+import handleLogout from "../components/auth/logout.jsx"; // ✅ correct path
 
-export default function ProfilePopup({ user, role, projects, onClose, onLogout }) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
+export default function ProfilePopup({ user, role, projects, onClose }) {
+  const navigate = useNavigate();
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [formData, setFormData] = React.useState({
     username: user || "",
     role: role || "",
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
 
   const handleSave = () => {
     console.log("✅ Saved data:", formData);
@@ -34,7 +36,7 @@ export default function ProfilePopup({ user, role, projects, onClose, onLogout }
   return (
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup-card profile-popup" onClick={(e) => e.stopPropagation()}>
-        {/* === Header + Avatar === */}
+        {/* Header + Avatar */}
         <div className="profile-top">
           <button className="close-btn" onClick={onClose}>
             <FiX size={22} />
@@ -48,7 +50,6 @@ export default function ProfilePopup({ user, role, projects, onClose, onLogout }
             />
           </div>
 
-          {/* Editable username */}
           {isEditing ? (
             <input
               type="text"
@@ -62,7 +63,6 @@ export default function ProfilePopup({ user, role, projects, onClose, onLogout }
             <h2 className="profile-name">@{formData.username}</h2>
           )}
 
-          {/* Editable role */}
           {isEditing ? (
             <input
               type="text"
@@ -79,7 +79,7 @@ export default function ProfilePopup({ user, role, projects, onClose, onLogout }
           )}
         </div>
 
-        {/* === Projects Section === */}
+        {/* Projects */}
         <div className="profile-content">
           <h3>
             <FiLayers /> Your Projects
@@ -98,7 +98,7 @@ export default function ProfilePopup({ user, role, projects, onClose, onLogout }
           )}
         </div>
 
-        {/* === Actions === */}
+        {/* Actions */}
         <div className="profile-actions">
           {isEditing ? (
             <>
@@ -111,13 +111,13 @@ export default function ProfilePopup({ user, role, projects, onClose, onLogout }
             </>
           ) : (
             <>
-              <button
-                className="btn profile-edit"
-                onClick={() => setIsEditing(true)}
-              >
+              <button className="btn profile-edit" onClick={() => setIsEditing(true)}>
                 <FiEdit3 /> Edit Info
               </button>
-              <button className="btn danger profile-logout" onClick={onLogout}>
+              <button
+                className="btn danger profile-logout"
+                onClick={() => handleLogout(navigate)}
+              >
                 <FiLogOut /> Logout
               </button>
             </>
