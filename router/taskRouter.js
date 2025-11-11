@@ -1,16 +1,16 @@
 const express = require("express");
 const router = express.Router({ mergeParams: true });
 const auth = require("../middleware/authMiddleware");
-const taskController = require("../Controllers/taskController");
+const taskController = require("../controllers/taskController");
 
-// Assign task (Team Head or Subteam Head)
-router.post("/:teamId/tasks", auth, taskController.assignTask);                     // team-level task
-router.post("/:teamId/subteams/:subteamId/tasks", auth, taskController.assignTask); // subteam-level task
+// Assign task
+router.post("/:teamId/tasks", auth, taskController.assignTask); // Team Head
+router.post("/:teamId/subteams/:subteamId/tasks", auth, taskController.assignTask); // Subteam Head
 
-// View tasks
+// View own tasks
 router.get("/my-tasks", auth, taskController.getMyTasks);
 
-// Update status
-router.put("/task/:taskId/status", auth, taskController.updateTaskStatus);
+// Update task status
+router.put("/:taskId/status", auth, taskController.updateTaskStatus);
 
 module.exports = router;

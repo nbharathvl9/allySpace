@@ -6,7 +6,7 @@ const TaskSchema = new mongoose.Schema({
   assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   assignedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   teamId: { type: mongoose.Schema.Types.ObjectId, ref: "Team", required: true },
-  subteamId: { type: mongoose.Schema.Types.ObjectId, ref: "Subteam" }, // optional
+  subteamId: { type: mongoose.Schema.Types.ObjectId, ref: "Subteam" },
   status: { type: String, enum: ["Pending", "In Progress", "Completed"], default: "Pending" },
   deadline: { type: Date },
 }, { timestamps: true });
