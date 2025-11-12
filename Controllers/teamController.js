@@ -40,6 +40,80 @@ exports.createTeam = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+// Controllers/teamController.js
+exports.getMyTeams = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // 1️⃣ Fetch all teams where user is head or member
+    const teams = await Team.find({
+      $or: [{ TeamHId: userId }, { TeamMembers: userId }],
+    })
+      .populate("TeamHId", "userName email")
+      .populate({
+        path: "Subteams",
+        populate: [
+          { path: "headId", select: "userName email" },
+          { path: "members", select: "userName email" },
+          {
+            path: "tasks",
+            select: "title status assignee dueDate",
+            populate: { path: "assignee", select: "userName email" },
+          },
+        ],
+      });
+
+    // 2️⃣ Build role-aware response
+    const formatted = teams.map((team) => {
+      let role = "MEMBER";
+
+      // check if current user is team head
+      if (team.TeamHId && team.TeamHId._id.toString() === userId) {
+        role = "HEAD";
+      } else {
+        // check subteams
+        for (const sub of team.Subteams || []) {
+          if (sub.headId && sub.headId._id.toString() === userId) {
+            role = "SUB_HEAD";
+            break;
+          }
+          if (sub.members.some((m) => m._id.toString() === userId)) {
+            role = "MEMBER";
+            break;
+          }
+        }
+      }
+
+      return {
+        id: team._id,
+        name: team.TeamName,
+        description: team.Prototype || "",
+        head: team.TeamHId?.userName || "—",
+        role,
+        subprojects: (team.Subteams || []).map((s) => ({
+          id: s._id,
+          name: s.name,
+          description: s.description || "",
+          leader: s.headId?.userName || "—",
+          members: s.members.map((m) => m.userName),
+          tasks: (s.tasks || []).map((t) => ({
+            id: t._id,
+            title: t.title,
+            status: t.status,
+            assignee: t.assignee?.userName || "—",
+            due: t.dueDate,
+          })),
+        })),
+      };
+    });
+
+    res.status(200).json(formatted);
+  } catch (err) {
+    console.error("Error fetching teams:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
 
 
 // ✅ Team Head or Subteam Head can invite members (using username)

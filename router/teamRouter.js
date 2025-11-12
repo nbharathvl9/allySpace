@@ -5,6 +5,7 @@ const teamController = require("../Controllers/teamController");
 
 // ✅ Create team
 router.post("/create", auth, teamController.createTeam);
+router.get("/my-teams", auth, teamController.getMyTeams);
 
 // 🟩 Invite member to main team
 router.post("/:teamId/invite", auth, teamController.inviteMember);

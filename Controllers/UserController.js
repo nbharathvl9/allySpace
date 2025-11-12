@@ -1,6 +1,6 @@
 const User= require("../models/User.js");
 const bcrypt = require("bcryptjs");
-module.exports = async (name, userName, email, password) => {
+module.exports = async ( userName, email, password) => {
   try {
     if (!userName || !email || !password) {
       throw new Error("All fields required");
@@ -10,7 +10,7 @@ module.exports = async (name, userName, email, password) => {
 
 
     const user = new User({
-        name, 
+      
         userName, 
         email, 
         password : hashedPassword,
