@@ -1,9 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import {
-  FiPlus
-} from "react-icons/fi";
+import { FiPlus } from "react-icons/fi";
+import axios from "../../api/axiosConfig.js"
 import { useProjects } from "../../context/ProjectContext";
+
 import ProjectHeader from "./projectHeader.jsx";
 import SubprojectCard from "./subProjectCard.jsx";
 import CreateSubprojectModal from "../modals/CreateSubprojectModal";
@@ -13,11 +13,47 @@ import SubprojectHeadView from "./subProjectHeadView.jsx";
 import MemberView from "./member_View.jsx";
 
 export default function ProjectBoard() {
-  const { projectId } = useParams();
+  const { projectId } = useParams(); // backend teamId
   const { projects, currentUser } = useProjects();
 
-  // Find the current project
   const project = projects.find((p) => String(p.id) === String(projectId));
+
+  const [subprojects, setSubprojects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const [showCreateSub, setShowCreateSub] = useState(false);
+  const [manageFor, setManageFor] = useState(null);
+  const [assignFor, setAssignFor] = useState(null);
+
+  // ✅ Fetch all subteams (subprojects)
+  const fetchSubprojects = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(`/api/team/${projectId}/subteams`);
+      setSubprojects(res.data.subteams || []);
+    } catch (err) {
+      console.error("Error fetching subprojects:", err);
+      setError("Failed to load subprojects. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (projectId) fetchSubprojects();
+  }, [projectId]);
+
+  // ✅ Handle delete subproject (calls backend DELETE)
+  const handleDeleteSubproject = async (subId) => {
+    try {
+      await axios.delete(`/api/team/${projectId}/subteams/${subId}`);
+      setSubprojects((prev) => prev.filter((s) => s.id !== subId));
+    } catch (err) {
+      console.error("Error deleting subproject:", err);
+      alert("Failed to delete subproject.");
+    }
+  };
 
   if (!project)
     return (
@@ -26,24 +62,14 @@ export default function ProjectBoard() {
       </div>
     );
 
-  // Local states for modals
-  const [showCreateSub, setShowCreateSub] = useState(false);
-  const [manageFor, setManageFor] = useState(null);
-  const [assignFor, setAssignFor] = useState(null);
+  // ✅ Determine user's role dynamically
+const myRole = useMemo(() => project.role, [project]);
 
-  // Determine user's role
-  const myRole = useMemo(() => {
-    if (project.head === currentUser) return "HEAD";
-    if (project.subprojects?.find((s) => s.leader === currentUser)) return "SUB_HEAD";
-    if (project.subprojects?.find((s) => s.members.includes(currentUser))) return "MEMBER";
-    return "NONE";
-  }, [project, currentUser]);
 
-  const userSubproject = project.subprojects?.find((s) => s.leader === currentUser);
+  const userSubproject = subprojects.find((s) => s.leader === currentUser);
 
   return (
     <div className="content max">
-
       {/* Header */}
       <ProjectHeader
         project={project}
@@ -51,24 +77,32 @@ export default function ProjectBoard() {
         onCreateSub={() => setShowCreateSub(true)}
       />
 
-      {/* --- Project Head View --- */}
+      {/* --- HEAD View --- */}
       {myRole === "HEAD" && (
         <div className="grid-subprojects">
-          {project.subprojects?.length > 0 ? (
-            project.subprojects.map((sub) => (
+          {loading && <p>Loading subprojects...</p>}
+          {error && <p style={{ color: "red" }}>{error}</p>}
+
+          {!loading && !error && subprojects.length > 0 ? (
+            subprojects.map((sub) => (
               <SubprojectCard
                 key={sub.id}
-                project={project}
+                project={{ id: projectId }}
                 sub={sub}
                 myRole={myRole}
                 onManageMembers={() => setManageFor({ sub })}
                 onAssign={() => setAssignFor({ sub })}
+                // ✅ Connect delete button to backend
+                onDelete={() => handleDeleteSubproject(sub.id)}
               />
             ))
           ) : (
-            <div className="empty-state">
-              <p>No subprojects yet.</p>
-            </div>
+            !loading &&
+            !error && (
+              <div className="empty-state">
+                <p>No subprojects yet.</p>
+              </div>
+            )
           )}
 
           {/* Add Subproject Button */}
@@ -84,7 +118,7 @@ export default function ProjectBoard() {
         </div>
       )}
 
-      {/* --- Subproject Head View --- */}
+      {/* --- SUB_HEAD View --- */}
       {myRole === "SUB_HEAD" && userSubproject && (
         <div className="subproject-head-section">
           <SubprojectHeadView
@@ -98,33 +132,33 @@ export default function ProjectBoard() {
         </div>
       )}
 
-      {/* --- Member View (Placeholder for now) --- */}
-    
+      {/* --- MEMBER View --- */}
       {myRole === "MEMBER" && (
-    <MemberView
-      project={project}
-      subproject={project.subprojects.find((s) =>
-        s.members.includes(currentUser)
+        <MemberView
+          project={project}
+          subproject={subprojects.find((s) =>
+            s.members.includes(currentUser)
+          )}
+          currentUser={currentUser}
+          onSendResponse={(subId, message) =>
+            console.log("Response sent to Subproject Head:", message)
+          }
+        />
       )}
-      currentUser={currentUser}
-      onSendResponse={(subId, message) =>
-        console.log("Response sent to Subproject Head:", message)
-      }
-    />
-  )}
 
-      {/* --- No Role --- */}
+      {/* --- NO ROLE --- */}
       {myRole === "NONE" && (
         <div className="content">
           <h2 className="title">You have no access to this project.</h2>
         </div>
       )}
 
-      {/* --- Modals --- */}
+      {/* --- MODALS --- */}
       {showCreateSub && (
         <CreateSubprojectModal
           project={project}
           onClose={() => setShowCreateSub(false)}
+          onSuccess={fetchSubprojects} // auto refresh
         />
       )}
 
@@ -133,6 +167,7 @@ export default function ProjectBoard() {
           project={project}
           sub={manageFor.sub}
           onClose={() => setManageFor(null)}
+          onSuccess={fetchSubprojects}
         />
       )}
 
@@ -141,6 +176,7 @@ export default function ProjectBoard() {
           project={project}
           sub={assignFor.sub}
           onClose={() => setAssignFor(null)}
+          onSuccess={fetchSubprojects}
         />
       )}
     </div>

@@ -21,7 +21,7 @@ const register = async (req, res) => {
       return res.status(400).json({ message: "Username already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, userName, email, password: hashedPassword });
+    const user = await User.create({ userName, email, password: hashedPassword });
 
     // 5️⃣ Generate JWT token
     const token = jwt.sign(

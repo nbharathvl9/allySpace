@@ -854,7 +854,122 @@ button.action-primary {
 .btn.cancel:hover {
   background: rgba(255, 255, 255, 0.25);
 }
+.notification-wrapper {
+  position: relative;
+}
 
+/* Popup container */
+.notification-popup {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  width: 330px;
+  background: rgba(69, 74, 140, 0.6);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  z-index: 1000;
+  padding: 12px 0;
+  animation: fadeInUp 0.2s ease-out;
+}
 
+.notification-popup h4 {
+  margin: 0;
+  padding: 10px 16px;
+  font-size: 1rem;
+  color: var(--accent);
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.4px;
+}
+
+.notif-item {
+  padding: 12px 16px;
+  margin: 6px 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  transition: background 0.2s ease;
+  cursor: default;
+}
+
+.notif-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.notif-item p {
+  color: #fff;
+  font-size: 0.88rem;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+}
+
+/* Accept/Reject Button Row */
+.notif-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.btn-accept,
+.btn-reject {
+  border: none;
+  outline: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 10px;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+/* Accept Button */
+.btn-accept {
+  background: linear-gradient(135deg, var(--accent), #74d8ff);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(0, 198, 255, 0.3);
+}
+
+.btn-accept:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(0, 198, 255, 0.5);
+}
+
+/* Reject Button */
+.btn-reject {
+  background: rgba(255, 70, 70, 0.7);
+  color: white;
+  box-shadow: 0 0 8px rgba(255, 70, 70, 0.3);
+}
+
+.btn-reject:hover {
+  background: rgba(255, 70, 70, 0.9);
+  transform: scale(1.05);
+}
+
+/* Small entry animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dot */
+.notif-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent);
+}
 
 

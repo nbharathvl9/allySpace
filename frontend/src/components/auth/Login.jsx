@@ -22,7 +22,9 @@ export default function Login({ onLogin }) {
     });
 
     if (res.data?.token) {
-      localStorage.setItem("token", res.data.token);
+     localStorage.setItem("token", res.data.token);
+      localStorage.setItem("userName", res.data.user.userName);
+      localStorage.setItem("userEmail", res.data.user.email);
       toast.success("Login successful!");
       onLogin();
       navigate("/app");

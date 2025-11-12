@@ -12,7 +12,6 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
-
 // Connect to DB
 connectdb()
   .then(() => {
@@ -28,6 +27,8 @@ const subteamRouter = require("./router/subteamRouter");
 const teamRouter = require("./router/teamRouter");
 app.use("/api/team", teamRouter);
 app.use("/api/team", subteamRouter);
+const Team = require("./models/Team.js");
+Team.collection.dropIndex("TeamId_1").catch(() => {});
 
 const taskRouter = require("./router/taskRouter");
 app.use("/api/team", taskRouter);

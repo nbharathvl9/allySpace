@@ -7,12 +7,15 @@ export default function CreateProjectModal({ onClose }){
   const [form, setForm] = useState({name:"", description:""});
   const navigate = useNavigate();
 
-  const submit = ()=>{
-    if(!form.name.trim()) return;
-    const id = createProject(form);
+  const submit = async () => {
+  if (!form.name.trim()) return;
+  const id = await createProject(form);
+  if (id) {
     onClose();
     navigate(`/app/projects/${id}`);
-  };
+  }
+};
+
 
   return (
     <div className="popup-overlay" onClick={onClose}>
