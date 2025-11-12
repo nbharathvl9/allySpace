@@ -1,5 +1,4 @@
-
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const TeamSchema = new mongoose.Schema({
   TeamName: { type: String, required: true },
@@ -14,4 +13,4 @@ const TeamSchema = new mongoose.Schema({
 TeamSchema.index({ TeamHId: 1 });
 TeamSchema.index({ TeamMembers: 1 });
 
-module.exports = mongoose.model('Team', TeamSchema);
+module.exports = mongoose.model("Team", TeamSchema);

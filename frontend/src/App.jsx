@@ -13,7 +13,7 @@ import {
   FiMessageSquare,
   FiSearch,
 } from "react-icons/fi";
-import axios from "./api/axiosConfig.js";
+
 import ProfilePopup from "./components/ProfilePopup.jsx";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
@@ -22,6 +22,8 @@ import ProjectBoard from "./components/projects/projectBoard.jsx";
 import { ProjectProvider } from "./context/ProjectContext.jsx";
 import handleLogoutFn from "./components/auth/logout.jsx";
 import NotificationList from "./components/notifications/NotificationList.jsx";
+
+import axios from "./api/axiosConfig.js"
 
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -66,6 +68,7 @@ function MainApp() {
   if (!currentUser) return <Navigate to="/login" replace />;
 
   const showSidebar = location.pathname.startsWith("/app");
+  
 
   return (
     <ProjectProvider currentUser={currentUser}>
@@ -85,13 +88,11 @@ function MainApp() {
             <h1 className="logo">AllySpace</h1>
           </div>
 
-          {/* --- Search --- */}
-          <div className="topbar-center">
-            <div className="search-container">
-              <FiSearch className="search-icon" />
-              <input type="text" placeholder="Search..." className="search-input" />
-            </div>
-          </div>
+        {/* Center: Search Bar */}
+<div className="topbar-center">
+  <SearchBar />
+</div>
+
 
           {/* --- Right icons --- */}
           <div className="topbar-right">

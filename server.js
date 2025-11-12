@@ -35,3 +35,6 @@ app.use("/api/team", taskRouter);
 
 const notificationRouter = require("./router/notification.js");
 app.use("/api/notifications", notificationRouter);
+
+const searchRouter = require("./router/searchRouter");
+app.use("/api/search", searchRouter);
