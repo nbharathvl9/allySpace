@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router({ mergeParams: true }); // allows :teamId from parent
-const auth = require("../middleware/authMiddleware");
-const subteamController = require("../controllers/subteamController");
+const auth = require("../middleware/authMiddleware.js");
+const subteamController = require("../Controllers/subteamController.js");
 
 // ✅ Create Subteam under a Team
+
 router.post("/:teamId/subteams", auth, subteamController.createSubteam);
 
 router.put("/:teamId/subteams/:subteamId/assign-head", auth, subteamController.assignSubteamHead);
@@ -19,5 +20,7 @@ router.post("/:teamId/subteams/:subteamId/add-member", auth, subteamController.a
 
 // ✅ Remove Member from a Subteam
 router.delete("/:teamId/subteams/:subteamId/remove-member/:memberId", auth, subteamController.removeMemberFromSubteam);
+router.delete("/:teamId/subteams/:subteamId", auth, subteamController.deleteSubteam);
+
 
 module.exports = router;

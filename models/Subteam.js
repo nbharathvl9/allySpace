@@ -6,6 +6,7 @@ const SubteamSchema = new mongoose.Schema({
   headId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // optional subteam head
   members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // members of this subteam
   description: { type: String },
+  tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
 }, { timestamps: true });
 
 // common indexes

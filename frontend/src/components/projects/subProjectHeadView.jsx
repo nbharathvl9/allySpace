@@ -1,14 +1,8 @@
 import React, { useMemo, useState } from "react";
-import {
-  FiUserPlus,
-  FiTrash2,
-  FiClipboard,
-  FiCalendar,
-  FiSend,
-  FiCheckCircle,
-} from "react-icons/fi";
-import "../../App.css";
-import "./subprojecthead.css"
+import { FiUserPlus, FiTrash2, FiClipboard, FiCalendar, FiSend, FiCheckCircle } from "react-icons/fi";
+import axios from "../../api/axiosConfig.js";
+import "./subprojecthead.css";
+
 export default function SubprojectHeadView({ project, subproject, onSendResponse }) {
   const [members, setMembers] = useState([...subproject.members]);
   const [tasks, setTasks] = useState([...subproject.tasks]);
@@ -16,63 +10,119 @@ export default function SubprojectHeadView({ project, subproject, onSendResponse
   const [newMember, setNewMember] = useState("");
   const [newTask, setNewTask] = useState({ title: "", assignedTo: "", deadline: "" });
   const [headMessage, setHeadMessage] = useState("");
+  const [loadingMember, setLoadingMember] = useState(false);
+  const [loadingTask, setLoadingTask] = useState(false);
 
   const canAddTask = useMemo(
     () => newTask.title.trim() && newTask.assignedTo.trim() && newTask.deadline.trim(),
     [newTask]
   );
 
-  const handleAddMember = () => {
-    const name = newMember.trim();
-    if (!name || members.includes(name)) return;
-    const updated = [...members, name];
-    setMembers(updated);
-    subproject.members = updated;
-    setNewMember("");
-    setShowAddMember(false);
+  // Add member by username (e.g. "@sam" or "sam")
+  const handleAddMember = async () => {
+    const username = newMember.trim().replace("@", "");
+    if (!username) return;
+
+    try {
+      setLoadingMember(true);
+      const res = await axios.post(
+        `/api/team/${project.id}/subteams/${subproject.id}/add-member`,
+        { memberUsername: username }
+      );
+      // server returns the updated member list (recommended)
+      if (res.data && Array.isArray(res.data.members)) {
+        setMembers(res.data.members);
+      } else {
+        // optimistic fallback
+        setMembers((prev) => [...prev, username]);
+      }
+      setNewMember("");
+      setShowAddMember(false);
+    } catch (err) {
+      console.error("Error adding member:", err);
+      alert(err?.response?.data?.message || "Failed to add member.");
+    } finally {
+      setLoadingMember(false);
+    }
   };
 
-  const handleRemoveMember = (m) => {
-    const updated = members.filter((x) => x !== m);
-    setMembers(updated);
-    subproject.members = updated;
+  // Remove member by username
+  const handleRemoveMember = async (memberUsername) => {
+    if (!window.confirm(`Remove ${memberUsername} from ${subproject.name}?`)) return;
+    try {
+      const username = memberUsername.replace("@", "");
+      const res = await axios.delete(
+        `/api/team/${project.id}/subteams/${subproject.id}/remove-member/${encodeURIComponent(username)}`
+      );
+      if (res.data && Array.isArray(res.data.members)) {
+        setMembers(res.data.members);
+      } else {
+        setMembers((prev) => prev.filter((m) => m !== memberUsername));
+      }
+    } catch (err) {
+      console.error("Error removing member:", err);
+      alert(err?.response?.data?.message || "Failed to remove member.");
+    }
   };
 
-  const handleAddTask = () => {
+  // Create task — backend accepts assignedToUsername
+  const handleAddTask = async () => {
     if (!canAddTask) return;
-    const task = {
-      id: Date.now().toString(),
-      title: newTask.title.trim(),
-      assignee: newTask.assignedTo.trim(),
-      due: newTask.deadline,
-      status: "assigned",
-      response: "",
-    };
-    const updated = [...tasks, task];
-    setTasks(updated);
-    subproject.tasks = updated;
-    setNewTask({ title: "", assignedTo: "", deadline: "" });
-  };
+    try {
+      setLoadingTask(true);
+      const payload = {
+        title: newTask.title,
+        assignedToUsername: newTask.assignedTo.replace("@", ""),
+        deadline: newTask.deadline,
+      };
+      const res = await axios.post(
+        `/api/team/${project.id}/subteams/${subproject.id}/tasks`,
+        payload
+      );
 
-  const handleDeleteTask = (id) => {
-    const updated = tasks.filter((t) => t.id !== id);
-    setTasks(updated);
-    subproject.tasks = updated;
+      // expect server to return the created task
+      const task = res.data.task;
+      if (task) {
+        setTasks((prev) => [
+          ...prev,
+          {
+            id: task._id || task.id,
+            title: task.title,
+            assignee: task.assignedToUsername || task.assignedTo || task.assignee,
+            due: task.deadline || task.due || task.dueDate,
+            status: task.status || "assigned",
+          },
+        ]);
+      } else {
+        // optimistic fallback
+        setTasks((prev) => [
+          ...prev,
+          {
+            id: Date.now().toString(),
+            title: newTask.title,
+            assignee: newTask.assignedTo,
+            due: newTask.deadline,
+            status: "assigned",
+          },
+        ]);
+      }
+
+      setNewTask({ title: "", assignedTo: "", deadline: "" });
+    } catch (err) {
+      console.error("Error assigning task:", err);
+      alert(err?.response?.data?.message || "Failed to assign task.");
+    } finally {
+      setLoadingTask(false);
+    }
   };
 
   const handleToggleDone = (id) => {
-    const updated = tasks.map((t) =>
-      t.id === id ? { ...t, status: t.status === "done" ? "assigned" : "done" } : t
+    setTasks((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, status: t.status === "done" ? "assigned" : "done" } : t))
     );
-    setTasks(updated);
-    subproject.tasks = updated;
   };
 
-  const handleTaskResponse = (id, msg) => {
-    const updated = tasks.map((t) => (t.id === id ? { ...t, response: msg } : t));
-    setTasks(updated);
-    subproject.tasks = updated;
-  };
+  const handleDeleteTask = (id) => setTasks((prev) => prev.filter((t) => t.id !== id));
 
   const handleSendToHead = () => {
     const msg = headMessage.trim();
@@ -102,6 +152,7 @@ export default function SubprojectHeadView({ project, subproject, onSendResponse
             <FiUserPlus /> Add
           </button>
         </div>
+
         <div className="chips-wrap">
           {members.map((m) => (
             <div key={m} className="chip">
@@ -127,8 +178,8 @@ export default function SubprojectHeadView({ project, subproject, onSendResponse
                 <button className="cancel-btn" onClick={() => setShowAddMember(false)}>
                   Cancel
                 </button>
-                <button className="create-btn-popup" onClick={handleAddMember}>
-                  Add
+                <button className="create-btn-popup" onClick={handleAddMember} disabled={loadingMember}>
+                  {loadingMember ? "Adding..." : "Add"}
                 </button>
               </div>
             </div>
@@ -158,18 +209,14 @@ export default function SubprojectHeadView({ project, subproject, onSendResponse
               </div>
 
               <div className="task-meta">
-                <span><FiClipboard /> {t.assignee}</span>
-                <span><FiCalendar /> {t.due}</span>
+                <span>
+                  <FiClipboard /> {t.assignee}
+                </span>
+                <span>
+                  <FiCalendar /> {t.due}
+                </span>
                 <span className={`status ${t.status}`}>{t.status}</span>
               </div>
-
-              <textarea
-                className="task-response"
-                rows={2}
-                placeholder="Add or update response..."
-                value={t.response || ""}
-                onChange={(e) => handleTaskResponse(t.id, e.target.value)}
-              />
             </div>
           ))}
         </div>
@@ -192,12 +239,8 @@ export default function SubprojectHeadView({ project, subproject, onSendResponse
             value={newTask.deadline}
             onChange={(e) => setNewTask({ ...newTask, deadline: e.target.value })}
           />
-          <button
-            className={`btn-primary ${!canAddTask ? "disabled" : ""}`}
-            onClick={handleAddTask}
-            disabled={!canAddTask}
-          >
-            Add Task
+          <button className={`btn-primary ${!canAddTask ? "disabled" : ""}`} onClick={handleAddTask} disabled={!canAddTask || loadingTask}>
+            {loadingTask ? "Adding…" : "Add Task"}
           </button>
         </div>
       </section>
@@ -206,12 +249,7 @@ export default function SubprojectHeadView({ project, subproject, onSendResponse
       <section className="sp-section glass">
         <h3>Send Update to Project Head</h3>
         <div className="send-row">
-          <textarea
-            placeholder="Write your update..."
-            rows={3}
-            value={headMessage}
-            onChange={(e) => setHeadMessage(e.target.value)}
-          />
+          <textarea placeholder="Write your update..." rows={3} value={headMessage} onChange={(e) => setHeadMessage(e.target.value)} />
           <button className="btn-primary send-btn" onClick={handleSendToHead}>
             <FiSend /> Send
           </button>
