@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import {
   BrowserRouter as Router,
   Routes,
@@ -13,6 +14,7 @@ import {
   FiMessageSquare,
   FiSearch,
 } from "react-icons/fi";
+
 import ProfilePopup from "./components/ProfilePopup.jsx";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
@@ -20,6 +22,8 @@ import Sidebar from "./components/sidebar/sidebar.jsx";
 import ProjectBoard from "./components/projects/projectBoard.jsx";
 import { ProjectProvider } from "./context/ProjectContext.jsx";
 import handleLogoutFn from "./components/auth/logout.jsx"; // ✅ renamed to avoid confusion
+
+import axios from "./api/axiosConfig.js"
 
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -55,6 +59,7 @@ function MainApp() {
   };
 
   const showSidebar = location.pathname.startsWith("/app");
+  
 
   return (
     <div className="app">
@@ -75,16 +80,10 @@ function MainApp() {
         </div>
 
         {/* Center: Search Bar */}
-        <div className="topbar-center">
-          <div className="search-container">
-            <FiSearch className="search-icon" />
-            <input
-              type="text"
-              placeholder="Search..."
-              className="search-input"
-            />
-          </div>
-        </div>
+<div className="topbar-center">
+  <SearchBar />
+</div>
+
 
         {/* Right section */}
         <div className="topbar-right">
